@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Usuario from '../models/usuarioModel'; // Importa el modelo de Usuario
+import bcrypt from 'bcrypt';
 
 const usuariosController = {
   getAllUsuarios: async (req: Request, res: Response) => {
@@ -12,22 +13,30 @@ const usuariosController = {
   },
   createUsuario: async (req: Request, res: Response) => {
     try {
-      const { nombre, correo } = req.body; // Obtén los datos del cuerpo de la solicitud
-      
+      const { nombre, password } = req.body;
+  
+      if (!nombre || !password) {
+        return res.status(400).json({ error: 'El nombre y la contraseña son obligatorios' });
+      }
+  
+      const saltRounds = 10;
+      const passwordHash = await bcrypt.hash(password, saltRounds);
+      console.log('Hash de contraseña:', typeof passwordHash);
+  
       // Crea un nuevo usuario en la base de datos
       const nuevoUsuario = await Usuario.create({
         nombre,
-        correo,
+        password:passwordHash,
         // Otros campos según tu modelo
       });
-
+  
       res.status(201).json(nuevoUsuario); // Devuelve el nuevo usuario creado
     } catch (error) {
-        console.log(error);
-        
-      res.status(500).json(error);
+      
+      console.error(error);
+      res.status(500).json({ error: 'Ocurrió un error al crear el usuario' });
     }
-  },
+  }
   // Agrega otras funciones del controlador aquí
 };
 

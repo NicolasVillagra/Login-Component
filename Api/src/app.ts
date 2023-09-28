@@ -11,7 +11,7 @@ app.use(express.json());
 app.use('/api/usuarios', usuariosRouter);
 
 // Inicia la sincronización de Sequelize con la base de datos
-sequelize.sync()
+sequelize.sync({ alter: true })
   .then(() => {
     console.log('Base de datos sincronizada');
     

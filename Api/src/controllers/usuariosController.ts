@@ -12,7 +12,7 @@ const usuariosController = {
     }
   },
   getOneUsuario: async (req: Request, res: Response) => {
-    const { nombre, password } = req.query; // Obtén los valores de la consulta de URL
+    const { nombre, password } = req.body;
   
     try {
       const usuario = await Usuario.findOne({
@@ -20,20 +20,15 @@ const usuariosController = {
       });
   
       if (usuario) {
-        if (typeof password === 'string') {
-          // Verificar si la contraseña proporcionada coincide con la contraseña almacenada
-          const passwordMatch = await bcrypt.compare(password, usuario.getDataValue('password'));
+        // Verificar si la contraseña proporcionada coincide con la contraseña almacenada
+        const passwordMatch = await bcrypt.compare(password, usuario.getDataValue('password'));
   
-          if (passwordMatch) {
-            // Contraseña válida, puedes considerar al usuario autenticado
-            res.json({ mensaje: "Inicio de sesión exitoso" });
-          } else {
-            // Contraseña incorrecta
-            res.status(401).json({ error: "Contraseña incorrecta" });
-          }
+        if (passwordMatch) {
+          // Contraseña válida, puedes considerar al usuario autenticado
+          res.json({ mensaje: "Inicio de sesión exitoso" });
         } else {
-          // Si password no es una cadena válida
-          res.status(400).json({ error: "Contraseña no válida" });
+          // Contraseña incorrecta
+          res.status(401).json({ error: "Contraseña incorrecta" });
         }
       } else {
         // Usuario no encontrado

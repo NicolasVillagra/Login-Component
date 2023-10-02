@@ -22,14 +22,16 @@ const handleSubmit = async (e:any)=>{
   e.preventDefault()
   setInfo(initialState)
   try {
-    const response = await axios.get("http://localhost:3001/api/usuarios/users", {
-      params: {
-        email: Info.email,
+    const response = await axios.post("http://localhost:3001/api/usuarios/user", {
+        nombre: Info.email,
         password:Info.password // Usar "email" en lugar de "nombre"
         // Aquí puedes eliminar la línea que establece el parámetro "password"
-      }
     });
-    const data =response.data
+    const data =response.data.mensaje
+
+    if(data === "Inicio de sesión exitoso"){
+      window.alert("se inicion sesion exitosamente")
+    }
     console.log(data);
     
   } catch (error) {
@@ -67,7 +69,7 @@ console.log(Info);
                 onChange={handleInfo}
                   id="email"
                   name="email"
-                  type="text"
+                  type="email"
                   autoComplete="email"
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
